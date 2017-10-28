@@ -5,10 +5,54 @@ date: "October 27, 2017"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## Purpose
 Document for data exploration for __Data Challenge 2017__!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#read in neccessary packages
+
+ipak <- function(pkg){
+    new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+    if (length(new.pkg)) 
+        install.packages(new.pkg, dependencies = TRUE)
+    sapply(pkg, require, character.only = TRUE)
+}
+
+packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal")
+
+ipak(packages)
+
+#read in dataset
+
+dc <- read_csv("Data.csv")
+
+```
+
+# Look at the data
+```{r dataexplore, include = FALSE}
+dim(dc)
+names(dc)
+str(dc)
+
+tab1 <- tableby(data = dc, formula = ~ .)
+summary(tab1, text = TRUE)
+
+# variable x1 operates the same as ID. Will keep ID.
+
+dc1 <- dc %>% 
+  select(-X1)
+
+# ID has no bearing on the model. will exclude from evaluation.
+sp1 <- dc1 %>% 
+  dplyr::select(-ID) %>% 
+  ggpairs()
+
+sp1
+ggsave("sp1.tiff", device = "tiff", plot = last_plot(), dpi = 500)
+dev.off()
+```
+
+
 
