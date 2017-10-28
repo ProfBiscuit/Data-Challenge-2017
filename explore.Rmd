@@ -1,0 +1,14 @@
+---
+title: "ExploratoryAnalyses"
+author: "MRB"
+date: "October 27, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Purpose
+Document for data exploration for __Data Challenge 2017__!
+
