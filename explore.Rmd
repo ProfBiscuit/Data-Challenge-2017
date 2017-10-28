@@ -32,19 +32,33 @@ dc <- read_csv("Data.csv")
 
 # Look at the data
 ```{r dataexplore, include = FALSE}
+
+##EVALUATE THE STRUCTURE OF THE DATA
+
 dim(dc)
 names(dc)
 str(dc)
 
-tab1 <- tableby(data = dc, formula = ~ .)
-summary(tab1, text = TRUE)
-
 # variable x1 operates the same as ID. Will keep ID.
 
 dc1 <- dc %>% 
-  select(-X1)
+  dplyr::select(-X1)
+
+## CREATE A SUMMARY TABLE
+#change the treatment from integer to character so the desired information is expressed in the summary table
+
+class(dc$A) <- "character"
+
+tab1 <- dc1 %>% 
+  dplyr::select(-ID) %>% 
+  tableby(formula = ~ .)
+
+summary(tab1, text = TRUE)
+
+## CREATE A SCATTERPLOT MATRIX
 
 # ID has no bearing on the model. will exclude from evaluation.
+
 sp1 <- dc1 %>% 
   dplyr::select(-ID) %>% 
   ggpairs()
