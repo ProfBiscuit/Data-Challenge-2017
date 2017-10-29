@@ -71,8 +71,8 @@ sp1 <- dc1 %>%
   ggpairs()
 
 # sp1
-# ggsave("sp1.tiff", device = "tiff", plot = last_plot(), width = 15, height = 15, unit = "in")
-# unlink("sp1.tiff")
+# ggsave("sp1.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
+# unlink("sp1.png") do not run this
 ```
 
 ![knit to html to see](sp1.tiff)
