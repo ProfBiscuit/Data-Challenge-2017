@@ -74,10 +74,10 @@ sp1 <- dc1 %>%
 # unlink("sp1.tiff")
 ```
 
-![Scatterplot Matrix](sp1.tiff)
 
 ```{r, model1, include=TRUE, echo=FALSE, results='asis'}
 
-
+mod1 <- modelsum(data = dc1, formula = formulize("Y", names(dc1)[4:28]), adjust = ~ A, family = "gaussian")
+summary(mod1, title = "Model Summaries: Y = W_i + A, for i = 1, 2, ..., 25")
 ```
 
