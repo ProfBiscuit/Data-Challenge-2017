@@ -73,6 +73,16 @@ sp1 <- dc1 %>%
 # sp1
 # ggsave("sp1.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 # unlink("sp1.png") do not run this
+
+# Y is skewed right and strictly positive. will try log transform to see what it looks like.
+
+sp2 <- dc1 %>% 
+  mutate(log_y = log(Y)) %>% 
+  dplyr::select(-ID, -Y) %>%
+  dplyr::select(log_y,everything()) %>% 
+  ggpairs()
+
+# ggsave("sp2.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 ```
 
 ![knit to html to see](sp1.tiff)
