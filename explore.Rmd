@@ -3,8 +3,8 @@ title: "ExploratoryAnalyses"
 author: "MRB"
 date: "October 27, 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ## Purpose
@@ -74,6 +74,7 @@ sp1 <- dc1 %>%
 # unlink("sp1.tiff")
 ```
 
+![knit to html to see](sp1.tiff)
 
 ```{r, model1, include=TRUE, echo=FALSE, results='asis'}
 
