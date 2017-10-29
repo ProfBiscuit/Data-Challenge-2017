@@ -23,7 +23,7 @@ ipak <- function(pkg){
     sapply(pkg, require, character.only = TRUE)
 }
 
-packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal")
+packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal", "rpart")
 
 ipak(packages)
 
@@ -82,10 +82,15 @@ sp2 <- dc1 %>%
   dplyr::select(log_y,everything()) %>% 
   ggpairs()
 
+# sp2
 # ggsave("sp2.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 ```
+Scatterplot Matrix without Transformation
 
-![knit to html to see](sp1.tiff)
+![knit to html to see](sp1.png)
+Scatterplot Matrix with log transform on response variable. 
+
+![knit to html to see](sp2.png)
 
 ```{r, model1, include=TRUE, echo=FALSE, results='asis'}
 
@@ -93,3 +98,17 @@ mod1 <- modelsum(data = dc1, formula = formulize("Y", names(dc1)[4:28]), adjust 
 summary(mod1, title = "Model Summaries: Y = W_i + A, for i = 1, 2, ..., 25")
 ```
 
+# Playtime!
+
+```{r treeeeeeeees, include = TRUE, echo = FALSE}
+
+# Binary Decision Tree
+# First look at "Variable Importance"
+
+tree1 <- rpart(data = dc1, formula = formulize("Y", c(names(dc1)[4:28], "A")))
+
+summary(tree1)
+plot(tree1)
+text(tree1)
+title("Everybody Loves Raymond")
+```
