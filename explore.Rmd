@@ -3,8 +3,9 @@ title: "ExploratoryAnalyses"
 author: "MRB"
 date: "October 27, 2017"
 output:
-  html_document: default
+  word_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ## Purpose
