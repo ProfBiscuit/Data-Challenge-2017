@@ -64,14 +64,14 @@ summary(tab1, title = "Overall Data Summary")
 
 ## CREATE A SCATTERPLOT MATRIX
 
-# ID has no bearing on the model. will exclude from evaluation.
+# ID has no bearing on the modeling. will exclude from evaluation.
 
 sp1 <- dc1 %>% 
   dplyr::select(-ID) %>% 
   ggpairs()
 
 # sp1
-# ggsave("sp1.tiff", device = "tiff", plot = last_plot(), width = 10, height = 10, unit = "in")
+# ggsave("sp1.tiff", device = "tiff", plot = last_plot(), width = 15, height = 15, unit = "in")
 # unlink("sp1.tiff")
 ```
 
