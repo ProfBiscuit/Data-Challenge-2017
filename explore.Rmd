@@ -2,7 +2,9 @@
 title: "ExploratoryAnalyses"
 author: "MRB"
 date: "October 27, 2017"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ## Purpose
@@ -28,11 +30,6 @@ ipak(packages)
 
 dc <- read_csv("Data.csv")
 
-```
-
-# Look at the data
-```{r dataexplore, include = FALSE}
-
 ##EVALUATE THE STRUCTURE OF THE DATA
 
 dim(dc)
@@ -43,17 +40,26 @@ str(dc)
 
 dc1 <- dc %>% 
   dplyr::select(-X1)
+```
+
+# Look at the data
+
+```{r tab1, include = TRUE, echo=FALSE, results='asis'}
 
 ## CREATE A SUMMARY TABLE
 #change the treatment from integer to character so the desired information is expressed in the summary table
 
-class(dc$A) <- "character"
+class(dc1$A) <- "character"
 
 tab1 <- dc1 %>% 
   dplyr::select(-ID) %>% 
   tableby(formula = ~ .)
 
-summary(tab1, text = TRUE)
+summary(tab1, title = "Overall Data Summary")
+```
+
+
+```{r spm1, include = TRUE, fig.align="center", cache=TRUE, echo=FALSE}
 
 ## CREATE A SCATTERPLOT MATRIX
 
@@ -63,10 +69,15 @@ sp1 <- dc1 %>%
   dplyr::select(-ID) %>% 
   ggpairs()
 
-sp1
-ggsave("sp1.tiff", device = "tiff", plot = last_plot(), dpi = 500)
-dev.off()
+# sp1
+# ggsave("sp1.tiff", device = "tiff", plot = last_plot(), width = 10, height = 10, unit = "in")
+# unlink("sp1.tiff")
 ```
 
+![Scatterplot Matrix](sp1.tiff)
 
+```{r, model1, include=TRUE, echo=FALSE, results='asis'}
+
+
+```
 
