@@ -109,11 +109,18 @@ summary(mod1, title = "Model Summaries: Y = W_i + A, for i = 1, 2, ..., 25")
 
 tree1 <- rpart(data = dc1, formula = formulize("Y", c(names(dc1)[4:28], "A")))
 
-summary(tree1)
+summary(tree1) #Look at variable importance for funs
 plot(tree1)
 text(tree1)
 title("Everybody Loves Raymond")
 ```
+
+From the scatterplot matrix there appears to be several variables that are very strongly correlated.
+Techniques to consider: lasso, pls, others?
+
+Of the variables that are highly correlated, can select the variable(s) that appear to be most correlated with the response
+
+Must not lose focus. The objective is to measure the treatment effect of A, not predict Y.
 
 ```{r lasso, inclue = TRUE, echo = FALSE}
 #LASSO requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
