@@ -51,6 +51,8 @@ dc1 <- dc %>%
 #change the treatment from integer to character so the desired information is expressed in the summary table
 
 class(dc1$A) <- "character"
+class(dc1$W5) <- "character"
+class(dc1$W6) <- "character"
 
 tab1 <- dc1 %>% 
   dplyr::select(-ID) %>% 
@@ -111,4 +113,48 @@ summary(tree1)
 plot(tree1)
 text(tree1)
 title("Everybody Loves Raymond")
+```
+
+```{r lasso, inclue = TRUE, echo = FALSE}
+#LASSO requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
+
+dc1 <- dc1 %>% 
+  dplyr::select(-ID) %>% 
+  as.data.frame()
+
+dummies <- dummyVars(Y ~., data = dc1)
+dummies2 <- as.data.frame(predict(dummies, newdata = dc1))
+
+dc2 <- as.data.frame(cbind(dc1$Y, dummies2))
+names(dc2)[1] <- "Y"
+
+set.seed(1)
+
+inTrain <- createDataPartition(dc2$Y, p = .75, list = FALSE)
+
+training<-dc2[inTrain,]
+testing<-dc2[-inTrain,]
+dim(training)
+
+trainY <- training$Y
+
+trainX <- training %>% 
+  dplyr::select(-Y)
+
+testY <- testing %>% 
+  dplyr::select(Y)
+
+testX <- testing %>% 
+  dplyr::select(-Y)
+
+rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
+rctrl2 <- trainControl(method = "LOOCV")
+rctrl3 <- trainControl(method = "none")
+rctrlR <- trainControl(method = "cv", number = 3, returnResamp = "all", search = "random")
+
+set.seed(8675309)
+
+test_reg_cv_model <- train(trainX, trainY, method = "lasso", trControl = rctrl1, preProc = c("center", "scale"))
+
+test_reg_pred <- predict(test_reg_cv_model, testX)
 ```
