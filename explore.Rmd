@@ -3,9 +3,9 @@ title: "ExploratoryAnalyses"
 author: "MRB"
 date: "October 27, 2017"
 output:
-  word_document: default
   pdf_document: default
   html_document: default
+  word_document: default
 ---
 
 ## Purpose
@@ -122,8 +122,11 @@ Of the variables that are highly correlated, can select the variable(s) that app
 
 Must not lose focus. The objective is to measure the treatment effect of A, not predict Y.
 
-```{r lasso, inclue = TRUE, echo = FALSE}
-#LASSO requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
+```{r blasso, include = FALSE, echo = FALSE, cache = TRUE}
+#requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
+
+
+#Bayesian Lasso
 
 dc1 <- dc1 %>% 
   dplyr::select(-ID) %>% 
@@ -154,14 +157,54 @@ testY <- testing %>%
 testX <- testing %>% 
   dplyr::select(-Y)
 
-rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
+# https://topepo.github.io/caret/model-training-and-tuning.html
+rctrl1 <- trainControl(## 10-fold CV
+                           method = "repeatedcv",
+                           number = 10,
+                           ## repeated ten times
+                           repeats = 10)
 rctrl2 <- trainControl(method = "LOOCV")
 rctrl3 <- trainControl(method = "none")
 rctrlR <- trainControl(method = "cv", number = 3, returnResamp = "all", search = "random")
 
 set.seed(8675309)
 
-test_reg_cv_model <- train(trainX, trainY, method = "lasso", trControl = rctrl1, preProc = c("center", "scale"))
+test_rep_cv_model <- train(trainX, trainY, method = "blasso",     trControl = rctrl1, 
+   #preProc = c("center", "scale"), 
+    verb = 0)
 
-test_reg_pred <- predict(test_reg_cv_model, testX)
+test_reg_pred <- predict(test_rep_cv_model, testX)
+
+blassoGrid <- expand.grid(sparsity = seq(0.1, 0.5, 0.1))
+
+test_rep_cv_model2 <- train(trainX, trainY, method = "blasso",     trControl = rctrl1, 
+   #preProc = c("center", "scale"), 
+    verb = 0,
+   tuneGrid = blassoGrid)
+
+test_reg_pred2 <- predict(test_rep_cv_model2, testX)
+
+
+#fit a single blasso model and explore it
+reg.blasso = blasso(trainX, trainY)
+
+## summarize the beta (regression coefficients) estimates
+plot(reg.blasso, burnin=200)
+
+## plot the size of different models visited
+plot(reg.blasso, burnin=200, which="m")
+
+## get the summary
+s <- summary(reg.blasso, burnin=200)
+
+## calculate the probability that each beta coef != zero
+s$bn0
+
+## summarize s2
+plot(reg.blasso, burnin=200, which="s2")
+s$s2
+
+## summarize lambda2
+plot(reg.blasso, burnin=200, which="lambda2")
+s$lambda2
 ```
