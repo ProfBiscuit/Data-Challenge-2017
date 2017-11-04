@@ -23,13 +23,14 @@ ipak <- function(pkg){
     sapply(pkg, require, character.only = TRUE)
 }
 
-packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal", "rpart")
+packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal", "rpart",
+              "rpart.plot")
 
 ipak(packages)
 
 #read in dataset
-
-dc <- read_csv("Data.csv")
+  # variable x1 operates the same as ID. Will keep ID.
+dc <- read_csv("Data.csv")[-1]
 
 ##EVALUATE THE STRUCTURE OF THE DATA
 
@@ -37,10 +38,6 @@ dim(dc)
 names(dc)
 str(dc)
 
-# variable x1 operates the same as ID. Will keep ID.
-
-dc1 <- dc %>% 
-  dplyr::select(-X1)
 ```
 
 # Look at the data
@@ -86,6 +83,13 @@ sp2 <- dc1 %>%
 
 # sp2
 # ggsave("sp2.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
+
+sp3 <- dc1 %>% 
+  dplyr::select(-ID, -Y) %>% 
+  ggpairs()
+
+# sp3
+# ggsave("sp3.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 ```
 Scatterplot Matrix without Transformation
 
@@ -101,17 +105,32 @@ summary(mod1, title = "Model Summaries: Y = W_i + A, for i = 1, 2, ..., 25")
 ```
 
 # Playtime!
+## Different Methods of Variable Selection:
+### Decision Trees, Lasso, Backward, Forward, Stepwise, Manual
 
 ```{r treeeeeeeees, include = TRUE, echo = FALSE}
+########################## TREEEEEEEEEEEEEEEEES ##########################
+#http://www.milbo.org/doc/prp.pdf
+
+tree1 <- rpart(formula = formulize("Y", c(names(dc1)[4:28], "A")), method="anova", data = dc1)
+
+#tiff(filename="", width = 900, 
+#	height = 900, units = "px", pointsize = 12)
+
+rpart.plot(tree1, main = "Sweet, Sweet Plot",
+	type=4, extra= 101, under=TRUE, snip=FALSE, box.palette="BuGy", fallen = T,
+	prefix = paste("Predicted\n","Y", "= ", sep=" "), branch.lty=3, nn=TRUE)
+
+#dev.off()
 
 # Binary Decision Tree
 # First look at "Variable Importance"
 
-tree1 <- rpart(data = dc1, formula = formulize("Y", c(names(dc1)[4:28], "A")))
+tree2 <- rpart(data = dc1, formula = formulize("Y", c(names(dc1)[4:28], "A")))
 
-summary(tree1) #Look at variable importance for funs
-plot(tree1)
-text(tree1)
+summary(tree2) #Look at variable importance for funs
+plot(tree2)
+text(tree2)
 title("Everybody Loves Raymond")
 ```
 
@@ -124,7 +143,6 @@ Must not lose focus. The objective is to measure the treatment effect of A, not 
 
 ```{r blasso, include = FALSE, echo = FALSE, cache = TRUE}
 #requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
-
 
 #Bayesian Lasso
 
@@ -158,34 +176,36 @@ testX <- testing %>%
   dplyr::select(-Y)
 
 # https://topepo.github.io/caret/model-training-and-tuning.html
-rctrl1 <- trainControl(## 10-fold CV
-                           method = "repeatedcv",
-                           number = 10,
-                           ## repeated ten times
-                           repeats = 10)
-rctrl2 <- trainControl(method = "LOOCV")
-rctrl3 <- trainControl(method = "none")
-rctrlR <- trainControl(method = "cv", number = 3, returnResamp = "all", search = "random")
+#rctrl1 <- trainControl(## 10-fold CV
+#                           method = "repeatedcv",
+#                           number = 10,
+#                           ## repeated ten times
+#                           repeats = 10)
+#rctrl2 <- trainControl(method = "LOOCV")
+#rctrl3 <- trainControl(method = "none")
+#rctrlR <- trainControl(method = "cv", number = 3, #returnResamp = "all", search = "random")
 
-set.seed(8675309)
+#set.seed(8675309)
 
-test_rep_cv_model <- train(trainX, trainY, method = "blasso",     trControl = rctrl1, 
-   #preProc = c("center", "scale"), 
-    verb = 0)
+#test_rep_cv_model <- train(trainX, trainY, method #= "blasso",     trControl = rctrl1, 
+#   #preProc = c("center", "scale"), 
+#    verb = 0)
 
-test_reg_pred <- predict(test_rep_cv_model, testX)
+#test_reg_pred <- predict(test_rep_cv_model, testX)
 
-blassoGrid <- expand.grid(sparsity = seq(0.1, 0.5, 0.1))
+#blassoGrid <- expand.grid(sparsity = seq(0.1, 0.5, #0.1))
 
-test_rep_cv_model2 <- train(trainX, trainY, method = "blasso",     trControl = rctrl1, 
-   #preProc = c("center", "scale"), 
-    verb = 0,
-   tuneGrid = blassoGrid)
+#test_rep_cv_model2 <- train(trainX, trainY, method #= "blasso",     trControl = rctrl1, 
+#   #preProc = c("center", "scale"), 
+#    verb = 0,
+#   tuneGrid = blassoGrid)
 
-test_reg_pred2 <- predict(test_rep_cv_model2, testX)
+#test_reg_pred2 <- predict(test_rep_cv_model2, #testX)
 
+###############################################
 
-#fit a single blasso model and explore it
+#Bayesian Lasso
+
 reg.blasso = blasso(trainX, trainY)
 
 ## summarize the beta (regression coefficients) estimates
@@ -207,4 +227,11 @@ s$s2
 ## summarize lambda2
 plot(reg.blasso, burnin=200, which="lambda2")
 s$lambda2
+
+###############################################
+
+# Lasso
+
+
+
 ```
