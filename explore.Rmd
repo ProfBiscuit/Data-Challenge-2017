@@ -30,13 +30,13 @@ ipak(packages)
 
 #read in dataset
   # variable x1 operates the same as ID. Will keep ID.
-dc <- read_csv("Data.csv")[-1]
+dc1 <- read_csv("Data.csv")[-1]
 
 ##EVALUATE THE STRUCTURE OF THE DATA
 
-dim(dc)
-names(dc)
-str(dc)
+dim(dc1)
+names(dc1)
+str(dc1)
 
 ```
 
@@ -56,6 +56,11 @@ tab1 <- dc1 %>%
   tableby(formula = ~ .)
 
 summary(tab1, title = "Overall Data Summary")
+
+tab2 <- dc1 %>% 
+  tableby(formula = formulize("A", names(dc1)[4:28]))
+
+summary(tab2, title = "Overall Data Summary: By A")
 ```
 
 
@@ -106,7 +111,7 @@ summary(mod1, title = "Model Summaries: Y = W_i + A, for i = 1, 2, ..., 25")
 
 # Playtime!
 ## Different Methods of Variable Selection:
-### Decision Trees, Lasso, Backward, Forward, Stepwise, Manual
+### Decision Trees, Lasso, Forward, Stepwise, Manual (not backward)
 
 ```{r treeeeeeeees, include = TRUE, echo = FALSE}
 ########################## TREEEEEEEEEEEEEEEEES ##########################
@@ -131,7 +136,7 @@ tree2 <- rpart(data = dc1, formula = formulize("Y", c(names(dc1)[4:28], "A")))
 summary(tree2) #Look at variable importance for funs
 plot(tree2)
 text(tree2)
-title("Everybody Loves Raymond")
+title("I'm Bored")
 ```
 
 From the scatterplot matrix there appears to be several variables that are very strongly correlated.
