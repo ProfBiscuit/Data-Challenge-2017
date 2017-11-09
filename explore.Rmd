@@ -60,7 +60,7 @@ summary(tab1, title = "Overall Data Summary")
 tab2 <- dc1 %>% 
   tableby(formula = formulize("A", names(dc1)[4:28]))
 
-summary(tab2, title = "Overall Data Summary: By A")
+summary(tab2, title = "Overall Data Summary: By A", pfootnote=TRUE)
 ```
 
 
