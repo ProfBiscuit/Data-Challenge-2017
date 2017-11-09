@@ -37,6 +37,8 @@ dim(dc)
 names(dc)
 str(dc)
 
+glimpse(dc)
+
 # variable x1 operates the same as ID. Will keep ID.
 
 dc1 <- dc %>% 
@@ -50,9 +52,10 @@ dc1 <- dc %>%
 ## CREATE A SUMMARY TABLE
 #change the treatment from integer to character so the desired information is expressed in the summary table
 
-class(dc1$A) <- "character"
-class(dc1$W5) <- "character"
-class(dc1$W6) <- "character"
+dc1$A <- factor(dc1$A)
+#class(dc1$A) <- "character"
+#class(dc1$W5) <- "character"
+#class(dc1$W6) <- "character"
 
 tab1 <- dc1 %>% 
   dplyr::select(-ID) %>% 
@@ -75,6 +78,16 @@ sp1 <- dc1 %>%
 # sp1
 # ggsave("sp1.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 # unlink("sp1.png") do not run this
+
+
+#Add color mapping
+sp1_color <- dc1 %>% 
+  dplyr::select(-ID) %>% 
+  ggpairs(mapping=ggplot2::aes(color=A))
+
+# sp1_color
+# ggsave("sp1_color.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
+
 
 # Y is skewed right and strictly positive. will try log transform to see what it looks like.
 
