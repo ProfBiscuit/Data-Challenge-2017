@@ -249,7 +249,13 @@ s$lambda2
 ```
 
 ```{r mixedmodel1, include = TRUE echo = FALSE}
+# https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf
 # http://www.stat.wisc.edu/courses/st572-larget/Spring2007/handouts13-2.pdf
+# http://rcompanion.org/handbook/G_03.html
+# https://www.jaredknowles.com/journal/2013/11/25/getting-started-with-mixed-effect-models-in-r
+# https://stats.idre.ucla.edu/r/dae/mixed-effects-logistic-regression/
+
+
 # will use lme4 package for mixed model
 
 ```
