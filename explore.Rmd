@@ -34,9 +34,11 @@ dc1 <- read_csv("Data.csv")[-1]
 
 ##EVALUATE THE STRUCTURE OF THE DATA
 
+
 dim(dc1)
 names(dc1)
 str(dc1)
+
 
 ```
 
@@ -47,7 +49,8 @@ str(dc1)
 ## CREATE A SUMMARY TABLE
 #change the treatment from integer to character so the desired information is expressed in the summary table
 
-class(dc1$A) <- "character"
+dc1$A <- factor(dc1$A)
+#class(dc1$A) <- "character"
 class(dc1$W5) <- "character"
 class(dc1$W6) <- "character"
 
@@ -83,9 +86,6 @@ sp1_color <-  dc1 %>%
 # sp1
 # ggsave("sp1.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 # unlink("sp1.png") do not run this
-
-sp1_color
-ggsave("sp1_color.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 
 # Y is skewed right and strictly positive. will try log transform to see what it looks like.
 
