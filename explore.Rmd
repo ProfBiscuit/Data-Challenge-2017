@@ -258,5 +258,5 @@ s$lambda2
 
 # will use lme4 package for mixed model
 
-mixed1 <- nlme::lme(formula = formulize("Y", c(names(dc1)[4:28], "A")), random = ~1|ID, data = dc1)
+# mixed1 <- nlme::lme(formula = formulize("Y", c(names(dc1)[4:28], "A")), random = ~1|ID, data = dc1)
 ```
