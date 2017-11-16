@@ -74,9 +74,18 @@ sp1 <- dc1 %>%
   dplyr::select(-ID) %>% 
   ggpairs()
 
+dc1$A <- as.factor(dc1$A)
+
+sp1_color <-  dc1 %>% 
+  dplyr::select(-ID) %>%
+  ggpairs(mapping=ggplot2::aes(colour = A))
+
 # sp1
 # ggsave("sp1.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 # unlink("sp1.png") do not run this
+
+sp1_color
+ggsave("sp1_color.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 
 # Y is skewed right and strictly positive. will try log transform to see what it looks like.
 
