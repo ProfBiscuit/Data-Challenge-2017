@@ -24,7 +24,7 @@ ipak <- function(pkg){
 }
 
 packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal", "rpart",
-              "rpart.plot")
+              "rpart.plot", "lme4")
 
 ipak(packages)
 
@@ -246,6 +246,10 @@ s$lambda2
 
 # Lasso
 
+```
 
+```{r mixedmodel1, include = TRUE echo = FALSE}
+# http://www.stat.wisc.edu/courses/st572-larget/Spring2007/handouts13-2.pdf
+# will use lme4 package for mixed model
 
 ```
