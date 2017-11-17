@@ -83,9 +83,17 @@ sp1_color <-  dc1 %>%
   dplyr::select(-ID) %>%
   ggpairs(mapping=ggplot2::aes(colour = A))
 
+sp1_color_short <-  dc1 %>% 
+  dplyr::select(-ID, W2, W5, W7, W8, W9, W14, W16, W18, 
+                W19, W21, W22) %>%
+  ggpairs(mapping=ggplot2::aes(colour = A))
+
 # sp1_color
 # ggsave("sp1_color.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 # unlink("sp1.png") do not run this
+
+# sp1_color_short
+# ggsave("sp1_color_short.png", device = "png", plot = last_plot(), width = 15, height = 15, unit = "in")
 
 # Y is skewed right and strictly positive. will try log transform to see what it looks like.
 
@@ -111,6 +119,7 @@ Scatterplot Matrix without Transformation
 Scatterplot Matrix with log transform on response variable. 
 
 ![knit to html to see](sp1_color.png)
+![knit to html to see](sp1_color_short.png)
 
 ```{r, model0, include=TRUE, echo=FALSE, results='asis'}
 
@@ -301,8 +310,6 @@ plot(k)
 #ggsave("best_subset.png", device = "png", plot = plot(k), width = 15, height = 15, unit = "in")
 ```
 
-![knit to html to see](all_subset.png)
-![knit to html to see](best_subset.png)
 
 ```
 
