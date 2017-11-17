@@ -24,7 +24,7 @@ ipak <- function(pkg){
 }
 
 packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal", "rpart",
-              "rpart.plot", "lme4", "nlme")
+              "rpart.plot", "olsrr")
 
 ipak(packages)
 
@@ -110,9 +110,9 @@ Scatterplot Matrix without Transformation
 ![knit to html to see](sp1.png)
 Scatterplot Matrix with log transform on response variable. 
 
-![knit to html to see](sp2.png)
+![knit to html to see](sp1_color.png)
 
-```{r, model1, include=TRUE, echo=FALSE, results='asis'}
+```{r, model0, include=TRUE, echo=FALSE, results='asis'}
 
 mod1 <- modelsum(data = dc1, formula = formulize("Y", names(dc1)[4:28]), adjust = ~ A, family = "gaussian")
 summary(mod1, title = "Model Summaries: Y = W_i + A, for i = 1, 2, ..., 25")
@@ -248,7 +248,7 @@ s$lambda2
 
 ```
 
-```{r mixedmodel1, include = TRUE, echo = FALSE}
+```{r model1, include = FALSE, echo = FALSE}
 # https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf
 # http://www.stat.wisc.edu/courses/st572-larget/Spring2007/handouts13-2.pdf
 # http://rcompanion.org/handbook/G_03.html
@@ -256,7 +256,54 @@ s$lambda2
 # https://stats.idre.ucla.edu/r/dae/mixed-effects-logistic-regression/
 
 
-# will use lme4 package for mixed model
+fit1 <- lm(Y ~ A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1)
 
-# mixed1 <- nlme::lme(formula = formulize("Y", c(names(dc1)[4:28], "A")), random = ~1|ID, data = dc1)
+#left out w2 because it were annoying
+modfit1 <- modelsum(formula = Y ~ A, adjust = ~ W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
+summary(modfit1)
 ```
+
+```{r model2, include = FALSE, echo = FALSE}
+modfit2 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
+summary(modfit2)
+```
+```{r model3, include = FALSE, echo = FALSE}
+modfit3 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
+summary(modfit3)
+```
+```{r model4, include = FALSE, echo = FALSE}
+modfit4 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
+summary(modfit4)
+```
+```{r model5, include = TRUE, echo = FALSE}
+modfit5 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W15 + W16 + W19 + W21, data = dc1, family = "gaussian")
+summary(modfit5)
+```
+
+##All Subset
+Y = A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22
+
+```{r allsubset, include = TRUE, echo = FALSE, cache = TRUE}
+fit1 <- lm(Y ~ A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1)
+
+l <- ols_all_subset(fit1)
+plot(l)
+#ggsave("all_subset.png", device = "png", plot = plot(l), width = 15, height = 15, unit = "in")
+```
+
+##Best Subset
+Y = A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22
+
+```{r bestsubset, include = TRUE, echo = FALSE, cache = TRUE}
+
+k <- ols_best_subset(fit1)
+plot(k)
+#ggsave("best_subset.png", device = "png", plot = plot(k), width = 15, height = 15, unit = "in")
+```
+
+![knit to html to see](all_subset.png)
+![knit to html to see](best_subset.png)
+
+```
+
+
