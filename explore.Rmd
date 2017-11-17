@@ -83,8 +83,9 @@ sp1_color <-  dc1 %>%
   dplyr::select(-ID) %>%
   ggpairs(mapping=ggplot2::aes(colour = A))
 
-sp1_color_short <-  dc1 %>% 
-  dplyr::select(-ID, W2, W5, W7, W8, W9, W14, W16, W18, 
+sp1_color_short <- dc1 %>% 
+  dplyr::select(-ID) %>% 
+  dplyr::select(Y, A, W2, W5, W7, W8, W9, W14, W16, W18, 
                 W19, W21, W22) %>%
   ggpairs(mapping=ggplot2::aes(colour = A))
 
