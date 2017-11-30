@@ -33,7 +33,7 @@ plot(mars)
 plotmo(mars)
 ```
 
-### look at potential interactions between the covariates 
+### Look at potential interactions between the covariates 
 ```{r}
 mars_2degrees <- earth(Y ~ W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
                 W11 + W12 + W13 + W14 + W15 + W16 + W17 + W18 + W19 +
@@ -44,7 +44,7 @@ plot(mars_2degrees)
 plotmo(mars_2degrees)
 ```
 
-### with cross validation
+### ...with cross validation
 ```{r}
 mars_cv <- earth(Y ~ W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
                          W11 + W12 + W13 + W14 + W15 + W16 + W17 + W18 + W19 +
@@ -56,8 +56,8 @@ mars_cv <- earth(Y ~ W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
 plot(mars_cv, which=1, col.rsq=0)
 ```
 
-#variable importance
-evimp estimates variable importance in a MARS model   
+### Variable importance  
+evimp estimates variable importance in a MARS model    
 ```{r}
 evimp(mars,trim=FALSE)
 ```
