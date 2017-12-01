@@ -165,39 +165,59 @@ Of the variables that are highly correlated, can select the variable(s) that app
 
 Must not lose focus. The objective is to measure the treatment effect of A, not predict Y.
 
+##Use MARS to Pick Out Interaction Terms
+```{r MARS, include = TRUE, echo = FALSE}
+# http://www.milbo.org/doc/earth-notes.pdf
+
+dc2 <- dc1 %>% 
+  dplyr::select(-ID)
+
+mars1 <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, data = dc2)
+
+summary(mars1)
+
+```
+
+## What if hinge functions h(x) aren't allowed and we had to use linear associations only?
+```{r MARS_lin, include=TRUE, echo=FALSE}
+mars1_linear <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, linpreds = TRUE, data = dc2)
+
+summary(mars1_linear)
+```
+
 ```{r blasso, include = FALSE, echo = FALSE, cache = TRUE}
 #requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
 
 #Bayesian Lasso
 
-dc1 <- dc1 %>% 
-  dplyr::select(-ID) %>% 
-  as.data.frame()
+#dc1 <- dc1 %>% 
+#  dplyr::select(-ID) %>% 
+#  as.data.frame()
 
-dummies <- dummyVars(Y ~., data = dc1)
-dummies2 <- as.data.frame(predict(dummies, newdata = dc1))
+#dummies <- dummyVars(Y ~., data = dc1)
+#dummies2 <- as.data.frame(predict(dummies, newdata = dc1))
 
-dc2 <- as.data.frame(cbind(dc1$Y, dummies2))
-names(dc2)[1] <- "Y"
+#dc2 <- as.data.frame(cbind(dc1$Y, dummies2))
+#names(dc2)[1] <- "Y"
 
-set.seed(1)
+#set.seed(1)
 
-inTrain <- createDataPartition(dc2$Y, p = .75, list = FALSE)
+#inTrain <- createDataPartition(dc2$Y, p = .75, list = FALSE)
 
-training<-dc2[inTrain,]
-testing<-dc2[-inTrain,]
-dim(training)
+#training<-dc2[inTrain,]
+#testing<-dc2[-inTrain,]
+#dim(training)
 
-trainY <- training$Y
+#trainY <- training$Y
 
-trainX <- training %>% 
-  dplyr::select(-Y)
+#trainX <- training %>% 
+#  dplyr::select(-Y)
 
-testY <- testing %>% 
-  dplyr::select(Y)
+#testY <- testing %>% 
+#  dplyr::select(Y)
 
-testX <- testing %>% 
-  dplyr::select(-Y)
+#testX <- testing %>% 
+#  dplyr::select(-Y)
 
 # https://topepo.github.io/caret/model-training-and-tuning.html
 #rctrl1 <- trainControl(## 10-fold CV
@@ -230,27 +250,27 @@ testX <- testing %>%
 
 #Bayesian Lasso
 
-reg.blasso = blasso(trainX, trainY)
+#reg.blasso = blasso(trainX, trainY)
 
 ## summarize the beta (regression coefficients) estimates
-plot(reg.blasso, burnin=200)
+#plot(reg.blasso, burnin=200)
 
 ## plot the size of different models visited
-plot(reg.blasso, burnin=200, which="m")
+#plot(reg.blasso, burnin=200, which="m")
 
 ## get the summary
-s <- summary(reg.blasso, burnin=200)
+#s <- summary(reg.blasso, burnin=200)
 
 ## calculate the probability that each beta coef != zero
-s$bn0
+#s$bn0
 
 ## summarize s2
-plot(reg.blasso, burnin=200, which="s2")
-s$s2
+#plot(reg.blasso, burnin=200, which="s2")
+#s$s2
 
 ## summarize lambda2
-plot(reg.blasso, burnin=200, which="lambda2")
-s$lambda2
+#plot(reg.blasso, burnin=200, which="lambda2")
+#s$lambda2
 
 ###############################################
 
@@ -266,60 +286,48 @@ s$lambda2
 # https://stats.idre.ucla.edu/r/dae/mixed-effects-logistic-regression/
 
 
-fit1 <- lm(Y ~ A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1)
+#fit1 <- lm(Y ~ A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1)
 
 #left out w2 because it were annoying
-modfit1 <- modelsum(formula = Y ~ A, adjust = ~ W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
-summary(modfit1)
+#modfit1 <- modelsum(formula = Y ~ A, adjust = ~ W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
+#summary(modfit1)
 ```
 
 ```{r model2, include = FALSE, echo = FALSE}
-modfit2 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
-summary(modfit2)
+#modfit2 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
+#summary(modfit2)
 ```
 ```{r model3, include = FALSE, echo = FALSE}
-modfit3 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
-summary(modfit3)
+#modfit3 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
+#summary(modfit3)
 ```
 ```{r model4, include = FALSE, echo = FALSE}
-modfit4 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
-summary(modfit4)
+#modfit4 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W16 + W19 + W21 + W22, data = dc1, family = "gaussian")
+#summary(modfit4)
 ```
 ```{r model5, include = TRUE, echo = FALSE}
-modfit5 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W15 + W16 + W19 + W21, data = dc1, family = "gaussian")
-summary(modfit5)
-```
-
-##Use MARS to Pick Out Interaction Terms
-```{r MARS, include = TRUE, echo = FALSE}
-# http://www.milbo.org/doc/earth-notes.pdf
-
-dc2 <- dc1 %>% 
-  select(-ID)
-
-mars1 <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, data = dc2)
-
-summary(mars1)
+#modfit5 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W15 + W16 + W19 + W21, data = dc1, family = "gaussian")
+#summary(modfit5)
 ```
 
 ##All Subset
 Y = A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22
 
-```{r allsubset, include = TRUE, echo = FALSE, cache = TRUE}
-fit1 <- lm(Y ~ A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1)
+```{r allsubset, include = FALSE, echo = FALSE, cache = TRUE}
+#fit1 <- lm(Y ~ A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1)
 
-k <- ols_best_subset(fit1)
-l <- ols_all_subset(fit1)
-plot(l)
+#k <- ols_best_subset(fit1)
+#l <- ols_all_subset(fit1)
+#plot(l)
 #ggsave("all_subset.png", device = "png", plot = plot(l), width = 15, height = 15, unit = "in")
 ```
 
 ##Best Subset
 Y = A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22
 
-```{r bestsubset, include = TRUE, echo = FALSE, cache = TRUE}
+```{r bestsubset, include = FALSE, echo = FALSE, cache = TRUE}
 
-plot(k)
+#plot(k)
 #ggsave("best_subset.png", device = "png", plot = plot(k), width = 15, height = 15, unit = "in")
 ```
 
