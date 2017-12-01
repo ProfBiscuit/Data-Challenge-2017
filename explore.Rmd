@@ -24,7 +24,7 @@ ipak <- function(pkg){
 }
 
 packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal", "rpart",
-              "rpart.plot", "olsrr")
+              "rpart.plot", "olsrr", "earth")
 
 ipak(packages)
 
@@ -290,12 +290,25 @@ modfit5 <- modelsum(formula = Y ~ A, adjust = ~ W5 + W7 + W9 + W13 + W14 + W15 +
 summary(modfit5)
 ```
 
+##Use MARS to Pick Out Interaction Terms
+```{r MARS, include = TRUE, echo = FALSE}
+# http://www.milbo.org/doc/earth-notes.pdf
+
+dc2 <- dc1 %>% 
+  select(-ID)
+
+mars1 <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, data = dc2)
+
+summary(mars1)
+```
+
 ##All Subset
 Y = A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22
 
 ```{r allsubset, include = TRUE, echo = FALSE, cache = TRUE}
 fit1 <- lm(Y ~ A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22, data = dc1)
 
+k <- ols_best_subset(fit1)
 l <- ols_all_subset(fit1)
 plot(l)
 #ggsave("all_subset.png", device = "png", plot = plot(l), width = 15, height = 15, unit = "in")
@@ -306,12 +319,11 @@ Y = A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22
 
 ```{r bestsubset, include = TRUE, echo = FALSE, cache = TRUE}
 
-k <- ols_best_subset(fit1)
 plot(k)
 #ggsave("best_subset.png", device = "png", plot = plot(k), width = 15, height = 15, unit = "in")
 ```
 
 
-```
+
 
 
