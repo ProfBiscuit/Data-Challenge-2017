@@ -14,10 +14,7 @@ packages <- c("earth", "plotmo", "RCurl")
 
 ipak(packages)
 
-
-df <- getURL("https://raw.githubusercontent.com/ProfBiscuit/Data-Challenge-2017/master/Data.csv")
-dcData <- read.csv(text = df)
-
+dcData <- read.csv(url("https://raw.githubusercontent.com/ProfBiscuit/Data-Challenge-2017/master/Data.csv"))
 ```
 
 
@@ -33,9 +30,9 @@ plot(mars)
 plotmo(mars)
 ```
 
-### Look at potential interactions between the covariates 
+### Look at potential interactions between the covariates
 ```{r}
-mars_2degrees <- earth(Y ~ W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
+mars_2degrees <- earth(Y ~ A + W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
                 W11 + W12 + W13 + W14 + W15 + W16 + W17 + W18 + W19 +
                 W20 + W21 + W22 + W23 + W24 + W25,
               data = dcData,
@@ -46,14 +43,17 @@ plotmo(mars_2degrees)
 
 ### ...with cross validation
 ```{r}
-mars_cv <- earth(Y ~ W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
+mars_cv <- earth(Y ~ A + W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
                          W11 + W12 + W13 + W14 + W15 + W16 + W17 + W18 + W19 +
                          W20 + W21 + W22 + W23 + W24 + W25,
                        data = dcData,
                        degree = 2,
                        nfold = 10,
-                       keepxy = TRUE)
+                       ncross = 10,
+                       keepxy = TRUE,
+                       linpreds = TRUE)
 plot(mars_cv, which=1, col.rsq=0)
+summary(mars_cv)
 ```
 
 ### Variable importance  
@@ -61,3 +61,11 @@ evimp estimates variable importance in a MARS model
 ```{r}
 evimp(mars,trim=FALSE)
 ```
+
+```{r}
+mars1_linear <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, linpreds = TRUE, data = dcData)
+
+plot(mars1_linear)
+plotmo(mars1_linear, ngrid1 = 400, ngrid2 = 400)
+```
+
