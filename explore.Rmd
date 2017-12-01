@@ -24,7 +24,7 @@ ipak <- function(pkg){
 }
 
 packages <- c("GGally", "tidyverse", "caret", "glmnet", "arsenal", "rpart",
-              "rpart.plot", "olsrr", "earth", "plotmo")
+              "rpart.plot", "olsrr", "earth")
 
 ipak(packages)
 
@@ -178,67 +178,12 @@ summary(mars1)
 
 ```
 
-## What if hinge functions h(x) aren't allowed and we had to use linear associations only?  
+## What if hinge functions h(x) aren't allowed and we had to use linear associations only?
 ```{r MARS_lin, include=TRUE, echo=FALSE}
 mars1_linear <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, linpreds = TRUE, data = dc2)
 
 summary(mars1_linear)
 ```
-
-## Mo MARS  
-### Basic MARS model  
-```{r}
-mars <- earth(Y ~ W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
-              W11 + W12 + W13 + W14 + W15 + W16 + W17 + W18 + W19 +
-              W20 + W21 + W22 + W23 + W24 + W25,
-            data = dc2);
-
-summary(mars,digit=3);
-plot(mars)
-plotmo(mars)
-```
-
-### Look at potential interactions between the covariates  
-```{r}
-mars_2degrees <- earth(Y ~ A + W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
-                W11 + W12 + W13 + W14 + W15 + W16 + W17 + W18 + W19 +
-                W20 + W21 + W22 + W23 + W24 + W25,
-              data = dc2,
-              degree = 2)
-plot(mars_2degrees)
-plotmo(mars_2degrees)
-```
-
-### ...with cross validation  
-```{r}
-mars_cv <- earth(Y ~ A + W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10 +
-                         W11 + W12 + W13 + W14 + W15 + W16 + W17 + W18 + W19 +
-                         W20 + W21 + W22 + W23 + W24 + W25,
-                       data = dc2,
-                       degree = 2,
-                       nfold = 10,
-                       ncross = 10,
-                       keepxy = TRUE,
-                       linpreds = TRUE)
-plot(mars_cv, which=1, col.rsq=0)
-summary(mars_cv)
-```
-
-### Variable importance    
-evimp estimates variable importance in a MARS model    
-```{r}
-evimp(mars,trim=FALSE)
-```
-
-```{r}
-mars1_linear <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, linpreds = TRUE, data = dcData)
-
-plot(mars1_linear)
-plotmo(mars1_linear, ngrid1 = 400, ngrid2 = 400)
-```
-<br>  
-
-
 
 ```{r blasso, include = FALSE, echo = FALSE, cache = TRUE}
 #requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
@@ -385,7 +330,6 @@ Y = A + W2 + W4 + W5 + W7 + W8 + W9 + W13 + W14 + W15 + W16 + W19 + W21 + W22
 #plot(k)
 #ggsave("best_subset.png", device = "png", plot = plot(k), width = 15, height = 15, unit = "in")
 ```
-
 
 
 
