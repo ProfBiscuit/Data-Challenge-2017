@@ -161,30 +161,92 @@ title("I'm Bored")
 From the scatterplot matrix there appears to be several variables that are very strongly correlated.
 Techniques to consider: lasso, pls, others?
 
-Of the variables that are highly correlated, can select the variable(s) that appear to be most correlated with the response
+Of the variables that are highly correlated, can select the variable(s) that appear to be most correlated with the response.
 
 Must not lose focus. The objective is to measure the treatment effect of A, not predict Y.
 
-##Use MARS to Pick Out Interaction Terms
+## Use MARS to Pick Out Interaction Terms
+### Allow Interaction Up To Order 3.
+### Allow forward pass to build model out up to 40 terms (n/10).
+### Hinge functions h(x) with one knot are allowed.
+
 ```{r MARS, include = TRUE, echo = FALSE}
 # http://www.milbo.org/doc/earth-notes.pdf
 
 dc2 <- dc1 %>% 
   dplyr::select(-ID)
 
-mars1 <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, data = dc2)
+mars1 <- earth(Y ~ . , 
+               degree = 3, 
+               #trace=1.5, 
+               nk = 40, 
+               data = dc2)
 
 summary(mars1)
-
 ```
 
 ## What if hinge functions h(x) aren't allowed and we had to use linear associations only?
+### Allow Interaction Up To Order 3.
+### Allow forward pass to build model out up to 40 terms (n/10).
+### Hinge functions h(x) with one knot are NOT allowed. Only linear functions.
+
 ```{r MARS_lin, include=TRUE, echo=FALSE}
-mars1_linear <- earth(Y ~ . , degree = 3, trace=1.5, nk = 40, linpreds = TRUE, data = dc2)
+mars1_linear <- earth(Y ~ . , 
+                      degree = 3, 
+                      #trace=1.5, 
+                      nk = 40, 
+                      linpreds = TRUE, 
+                      data = dc2)
 
 summary(mars1_linear)
 ```
 
+## Since we want to interpret the treatment effect A, exclude A from being picked in interactions.
+### Allow Interaction Up To Order 3.
+### Allow forward pass to build model out up to 40 terms (n/10).
+### Hinge functions h(x) with one knot are allowed.
+
+Example Code (http://www.milbo.org/doc/earth-notes.pdf):
+
+```{r MARS2, include = TRUE, echo = FALSE}
+no_A_int <- function(degree, pred, parents)
+{
+# disallow humidity in terms of degree > 1
+# 1 is the A1 column in the input matrix
+if (degree > 1 && (pred == 1 || parents[1]))
+return(FALSE)
+TRUE
+}
+
+mars2 <- earth(Y ~ . , 
+               degree = 3, 
+               #trace=1.5, 
+               nk = 40, 
+               allowed = no_A_int,
+               data = dc2)
+
+summary(mars2)
+```
+
+## Since we want to interpret the treatment effect A, exclude A from being picked in interactions.
+### Allow Interaction Up To Order 3.
+### Allow forward pass to build model out up to 40 terms (n/10).
+### Hinge functions h(x) with one knot are allowed.
+
+```{r MARS2_linear, include = TRUE, echo = FALSE}
+mars2_linear <- earth(Y ~ . , 
+               degree = 3, 
+               #trace=1.5, 
+               nk = 40,
+               linpreds = TRUE,
+               allowed = no_A_int,
+               data = dc2)
+
+summary(mars2_linear)
+```
+
+
+# Ignore Below
 ```{r blasso, include = FALSE, echo = FALSE, cache = TRUE}
 #requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
 
