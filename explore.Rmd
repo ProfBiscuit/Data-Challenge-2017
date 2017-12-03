@@ -3,8 +3,8 @@ title: "ExploratoryAnalyses"
 author: "MRB"
 date: "October 27, 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 ---
 
@@ -117,9 +117,11 @@ sp3 <- dc1 %>%
 Scatterplot Matrix without Transformation
 
 ![knit to html to see](sp1.png)
-Scatterplot Matrix with log transform on response variable. 
+Scatterplot Matrix with color by treatment level. 
 
 ![knit to html to see](sp1_color.png)
+Scatterplot Matrix with select variables, colored by treatment level.
+
 ![knit to html to see](sp1_color_short.png)
 
 ```{r, model0, include=TRUE, echo=FALSE, results='asis'}
@@ -245,6 +247,38 @@ mars2_linear <- earth(Y ~ . ,
 summary(mars2_linear)
 ```
 
+## Since we want to interpret the treatment effect A, exclude A from being picked in interactions.
+### Allow Interaction Up To Order 3.
+### Allow forward pass to buid model out to MORE than 40 terms if it chooses.
+### Hinge functions h(x) with one knot are allowed.
+
+```{r MARS3, include = TRUE, echo = FALSE}
+mars3 <- earth(Y ~ . , 
+               degree = 3, 
+               #trace=1.5, 
+               #nk = 40, 
+               allowed = no_A_int,
+               data = dc2)
+
+summary(mars3)
+```
+
+## Since we want to interpret the treatment effect A, exclude A from being picked in interactions.
+### Allow Interaction Up To Order 3.
+### Allow forward pass to buid model out to MORE than 40 terms if it chooses.
+### Hinge functions h(x) with one knot are allowed.
+
+```{r MARS3_linear, include = TRUE, echo = FALSE}
+mars3_linear <- earth(Y ~ . , 
+               degree = 3, 
+               #trace=1.5, 
+               #nk = 40,
+               linpreds = TRUE,
+               allowed = no_A_int,
+               data = dc2)
+
+summary(mars3_linear)
+```
 
 # Ignore Below
 ```{r blasso, include = FALSE, echo = FALSE, cache = TRUE}
