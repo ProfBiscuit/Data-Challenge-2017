@@ -3,9 +3,7 @@ title: "ExploratoryAnalyses"
 author: "MRB"
 date: "October 27, 2017"
 output:
-  html_document: default
   pdf_document: default
-  word_document: default
 ---
 
 ## Purpose
@@ -278,6 +276,18 @@ mars3_linear <- earth(Y ~ . ,
                data = dc2)
 
 summary(mars3_linear)
+```
+## Allow up to 7 level interactions!
+```{r MARS4_linear, include = TRUE, echo = FALSE}
+mars4_linear <- earth(Y ~ . , 
+               degree = 7, 
+               #trace=1.5, 
+               #nk = 40,
+               linpreds = TRUE,
+               allowed = no_A_int,
+               data = dc2)
+
+summary(mars4_linear)
 ```
 
 # Ignore Below
