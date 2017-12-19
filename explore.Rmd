@@ -170,7 +170,7 @@ Must not lose focus. The objective is to measure the treatment effect of A, not 
 ### Allow forward pass to build model out up to 40 terms (n/10).
 ### Hinge functions h(x) with one knot are allowed.
 
-```{r MARS, include = TRUE, echo = FALSE}
+```{r MARS, include = TRUE, echo = TRUE}
 # http://www.milbo.org/doc/earth-notes.pdf
 
 dc2 <- dc1 %>% 
@@ -190,7 +190,7 @@ summary(mars1)
 ### Allow forward pass to build model out up to 40 terms (n/10).
 ### Hinge functions h(x) with one knot are NOT allowed. Only linear functions.
 
-```{r MARS_lin, include=TRUE, echo=FALSE}
+```{r MARS_lin, include=TRUE, echo=TRUE}
 mars1_linear <- earth(Y ~ . , 
                       degree = 3, 
                       #trace=1.5, 
@@ -208,7 +208,7 @@ summary(mars1_linear)
 
 Example Code (http://www.milbo.org/doc/earth-notes.pdf):
 
-```{r MARS2, include = TRUE, echo = FALSE}
+```{r MARS2, include = TRUE, echo = TRUE}
 no_A_int <- function(degree, pred, parents)
 {
 # disallow humidity in terms of degree > 1
@@ -233,7 +233,7 @@ summary(mars2)
 ### Allow forward pass to build model out up to 40 terms (n/10).
 ### Hinge functions h(x) with one knot are allowed.
 
-```{r MARS2_linear, include = TRUE, echo = FALSE}
+```{r MARS2_linear, include = TRUE, echo = TRUE}
 mars2_linear <- earth(Y ~ . , 
                degree = 3, 
                #trace=1.5, 
@@ -250,7 +250,7 @@ summary(mars2_linear)
 ### Allow forward pass to buid model out to MORE than 40 terms if it chooses.
 ### Hinge functions h(x) with one knot are allowed.
 
-```{r MARS3, include = TRUE, echo = FALSE}
+```{r MARS3, include = TRUE, echo = TRUE}
 mars3 <- earth(Y ~ . , 
                degree = 3, 
                #trace=1.5, 
@@ -266,7 +266,7 @@ summary(mars3)
 ### Allow forward pass to buid model out to MORE than 40 terms if it chooses.
 ### Hinge functions h(x) with one knot are allowed.
 
-```{r MARS3_linear, include = TRUE, echo = FALSE}
+```{r MARS3_linear, include = TRUE, echo = TRUE}
 mars3_linear <- earth(Y ~ . , 
                degree = 3, 
                #trace=1.5, 
@@ -278,7 +278,7 @@ mars3_linear <- earth(Y ~ . ,
 summary(mars3_linear)
 ```
 ## Allow up to 7 level interactions!
-```{r MARS4_linear, include = TRUE, echo = FALSE}
+```{r MARS4_linear, include = TRUE, echo = TRUE}
 mars4_linear <- earth(Y ~ . , 
                degree = 7, 
                #trace=1.5, 
@@ -289,6 +289,21 @@ mars4_linear <- earth(Y ~ . ,
 
 summary(mars4_linear)
 ```
+```{r FinalMARS1, include = TRUE, echo = TRUE}
+dc3 <- dc1 %>% 
+  dplyr::select(-ID) %>% 
+  as.data.frame()
+
+dummies <- dummyVars(Y ~., data = dc3)
+dummies2 <- as.data.frame(predict(dummies, newdata = dc3))
+
+dc4 <- as.data.frame(cbind(dc3$Y, dummies2))
+names(dc4)[1] <- "Y"
+finalmars1 <- lm(Y ~ A.1 + W1C + W7 + W1C*W25 + W51 * W61 + W61 * W25  + W7 * W21  + W9 * W15  + W9 * W25  + W1C * W20 * W25 + W7 * W18 * W21 , data = dc4)
+
+finalmars2 <- lm(Y ~ A.1 + W1C + W7 + W25 + W51 + W61 + W21 + W9 + W20 + W18 + W1C*W25 + W51*W61 + W61*W25  + W7*W21  + W9*W15  + W9*W25 + 
+                   W1C*W20 + W20*W25 + W7*W18 + W18*W21 + W1C*W20*W25 + W7*W18*W21 , data = dc4)
+```
 
 # Ignore Below
 ```{r blasso, include = FALSE, echo = FALSE, cache = TRUE}
@@ -296,15 +311,15 @@ summary(mars4_linear)
 
 #Bayesian Lasso
 
-#dc1 <- dc1 %>% 
-#  dplyr::select(-ID) %>% 
-#  as.data.frame()
+dc3 <- dc3 %>% 
+  dplyr::select(-ID) %>% 
+  as.data.frame()
 
-#dummies <- dummyVars(Y ~., data = dc1)
-#dummies2 <- as.data.frame(predict(dummies, newdata = dc1))
+dummies <- dummyVars(Y ~., data = dc3)
+dummies2 <- as.data.frame(predict(dummies, newdata = dc3))
 
-#dc2 <- as.data.frame(cbind(dc1$Y, dummies2))
-#names(dc2)[1] <- "Y"
+dc4 <- as.data.frame(cbind(dc3$Y, dummies2))
+names(dc2)[1] <- "Y"
 
 #set.seed(1)
 
