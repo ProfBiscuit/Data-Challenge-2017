@@ -305,6 +305,23 @@ finalmars2 <- lm(Y ~ A.1 + W1C + W7 + W25 + W51 + W61 + W21 + W9 + W20 + W18 + W
                    W1C*W20 + W20*W25 + W7*W18 + W18*W21 + W1C*W20*W25 + W7*W18*W21 , data = dc4)
 ```
 
+# Correct MARS Model
+```{r correctmodel, include = TRUE, echo = TRUE}
+correct <- earth(Y ~ . , 
+               degree = 7, 
+               #trace=1.5, 
+               #nk = 40,
+               #linpreds = TRUE,
+               #allowed = no_A_int,
+               data = dc2)
+
+summary(correct)
+```
+# Correct MARS Confidence Interval
+```{r correctci, echo = TRUE, include = TRUE}
+# Do bootstrap to determine 95% CI for average treatment effect as well as estimates for individual treatment effect
+```
+
 # Ignore Below
 ```{r blasso, include = FALSE, echo = FALSE, cache = TRUE}
 #requires that trainX is a data.frame, trainY is numeric, character variables be provided as dummy variables, and numeric variables be centered and scaled
